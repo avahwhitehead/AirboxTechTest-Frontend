@@ -46,8 +46,8 @@ export class TasksService {
 	 * @param tasks List of tasks to create
 	 * @returns {Observable<Task[]>} Observable containing the list of created tasks
 	 */
-	public createTasks(tasks: Task[]): Observable<Task[]> {
-		let taskResponses = tasks.map(this.TaskToTaskResponse);
+	public createTasks(tasks: TaskBase[]): Observable<Task[]> {
+		let taskResponses = tasks.map(this.TaskBaseToTaskResponse);
 
 		return this.httpClient.post<TaskResponse[]>("/api/tasks", taskResponses)
 			.pipe(
@@ -103,7 +103,7 @@ export class TasksService {
 	 */
 	private TaskResponseToTask(task: TaskResponse): Task {
 		return {
-			taskId: task.taskId,
+			taskId: task.taskId!,
 			priority: task.priority,
 			taskStatus: task.taskStatus,
 			assignedTo: task.assignedto,
@@ -119,7 +119,19 @@ export class TasksService {
 	 */
 	private TaskToTaskResponse(task: Task): TaskResponse {
 		return {
+			...this.TaskBaseToTaskResponse(task),
 			taskId: task.taskId,
+		};
+	}
+
+	/**
+	 * Convert a `TaskBase` object to a `TaskResponse`
+	 * @param task   The task object to convert
+	 * @returns An object representing the input task, in a format usable by the API
+	 * @private
+	 */
+	private TaskBaseToTaskResponse(task: TaskBase): TaskResponse {
+		return {
 			priority: task.priority,
 			taskStatus: task.taskStatus,
 			assignedto: task.assignedTo,
@@ -132,8 +144,7 @@ export class TasksService {
  * Represents a task created by the user.
  * Equivalent to {@see TaskResponse} but conforms to TypeScript casing.
  */
-export interface Task {
-	taskId: number;
+export interface TaskBase {
 	priority: 'LOW'|'MEDIUM'|'HIGH'|'UNASSIGNED';
 	taskStatus: string;
 	assignedTo: string;
@@ -141,10 +152,18 @@ export interface Task {
 }
 
 /**
+ * Represents a task created by the user.
+ * Equivalent to {@see TaskResponse} but conforms to TypeScript casing.
+ */
+export interface Task extends TaskBase {
+	taskId: number;
+}
+
+/**
  * A task, in the format required by the API.
  */
 interface TaskResponse {
-	taskId: number;
+	taskId?: number;
 	priority: 'LOW'|'MEDIUM'|'HIGH'|'UNASSIGNED';
 	taskStatus: string;
 	assignedto: string;

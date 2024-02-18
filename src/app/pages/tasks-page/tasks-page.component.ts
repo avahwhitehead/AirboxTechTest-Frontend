@@ -1,5 +1,5 @@
 import { Component, TemplateRef } from '@angular/core';
-import { Task, TasksService } from 'src/app/services/tasks.service';
+import { Task, TaskBase, TasksService } from 'src/app/services/tasks.service';
 import { NgbModal, NgbModalRef } from "@ng-bootstrap/ng-bootstrap";
 import { FormControl, FormGroup } from "@angular/forms";
 
@@ -49,7 +49,7 @@ export class TasksPageComponent {
 		});
 	}
 
-	saveTaskClick(e: MouseEvent, modal: TemplateRef<any>) {
+	saveTaskClick(e: MouseEvent) {
 		let taskId = this.editingTask?.taskId;
 
 		let task: Task = {
@@ -59,6 +59,16 @@ export class TasksPageComponent {
 			assignedTo: this.formGroup.get('assigned-to')!.value,
 			taskSummary: this.formGroup.get('task-summary')!.value,
 		}
+
+		if (taskId === -1) {
+			this.createTask(task);
+		} else {
+			this.saveTask(task);
+		}
+	}
+
+	private saveTask(task: Task) {
+		let taskId = task.taskId;
 
 		this.tasksService.updateTask(this.editingTask?.taskId!, task).subscribe((createdTask) => {
 			let index = this.tasks.findIndex(t => t.taskId === taskId);
@@ -74,10 +84,33 @@ export class TasksPageComponent {
 		});
 	}
 
+	private createTask(task: Task) {
+		this.tasksService.createTasks([task]).subscribe((createdTasks) => {
+			let createdTask = createdTasks[0];
+
+			this.tasks.push(createdTask);
+
+			this.modalService.dismissAll();
+			this.modalRef?.close();
+		});
+	}
+
 	openModal(modal: TemplateRef<any>, taskId: number) {
 		//Find the task object
-		let task = this.tasks.find(t => t.taskId === taskId);
-		this.editingTask = task;
+		let task: Task | undefined;
+		if (taskId === -1) {
+			task = {
+				taskId: -1,
+				taskStatus: '',
+				assignedTo: '',
+				priority: 'UNASSIGNED',
+				taskSummary: '',
+			}
+			this.editingTask = task;
+		} else {
+			task = this.tasks.find(t => t.taskId === taskId);
+			this.editingTask = task;
+		}
 
 		//Update the form group
 		this.formGroup.patchValue({

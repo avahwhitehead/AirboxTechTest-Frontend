@@ -1,3 +1,8 @@
+<button class="btn btn-outline-primary" (click)="openModal(editTaskModal, -1)">
+	<i class="bi-plus"></i>
+	New Task
+</button>
+
 <table class="table table-striped">
 	<thead class="table-header">
 		<tr>
@@ -32,11 +37,13 @@
 
 <ng-template #editTaskModal let-modal>
 	<div class="modal-header">
-		<h4 class="modal-title" id="modal-basic-title">Edit task</h4>
+		<h4 class="modal-title" id="modal-basic-title">
+			{{ editingTask?.taskId === -1 ? 'Create Task' : 'Edit Task' }}
+		</h4>
 		<button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
 	</div>
-	<div class="modal-body">
-		<form [formGroup]="formGroup">
+	<form [formGroup]="formGroup" (ngSubmit)="saveTaskClick($event)">
+		<div class="modal-body">
 			<div class="mb-3">
 				<label for="priority">Priority</label>
 				<select
@@ -80,9 +87,9 @@
 					name="task-summary"
 				></textarea>
 			</div>
-		</form>
-	</div>
-	<div class="modal-footer">
-		<button type="button" class="btn btn-outline-dark" (click)="saveTaskClick($event, editTaskModal)">Save</button>
-	</div>
+		</div>
+		<div class="modal-footer">
+			<button type="submit" class="btn btn-outline-primary">Save</button>
+		</div>
+	</form>
 </ng-template>
