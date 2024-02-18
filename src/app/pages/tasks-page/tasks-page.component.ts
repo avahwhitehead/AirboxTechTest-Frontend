@@ -1,5 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, TemplateRef } from '@angular/core';
 import { Task, TasksService } from 'src/app/services/tasks.service';
+import { NgbModal, NgbModalRef } from "@ng-bootstrap/ng-bootstrap";
+import { FormControl, FormGroup } from "@angular/forms";
 
 @Component({
 	selector: 'app-tasks-page',
@@ -9,8 +11,19 @@ import { Task, TasksService } from 'src/app/services/tasks.service';
 export class TasksPageComponent {
 	tasks: Task[];
 
+	editingTask?: Task;
+	modalRef?: NgbModalRef;
+
+	formGroup: FormGroup = new FormGroup<any>({
+		'priority': new FormControl(),
+		'task-status': new FormControl(),
+		'assigned-to': new FormControl(),
+		'task-summary': new FormControl(),
+	});
+
 	constructor(
 		private tasksService: TasksService,
+		private modalService: NgbModal,
 	) {
 		//Initialise the tasks list
 		this.tasks = [];
@@ -34,5 +47,47 @@ export class TasksPageComponent {
 
 			this.tasks.splice(index, 1);
 		});
+	}
+
+	saveTaskClick(e: MouseEvent, modal: TemplateRef<any>) {
+		let taskId = this.editingTask?.taskId;
+
+		let task: Task = {
+			taskId: taskId!,
+			priority: this.formGroup.get('priority')!.value,
+			taskStatus: this.formGroup.get('task-status')!.value,
+			assignedTo: this.formGroup.get('assigned-to')!.value,
+			taskSummary: this.formGroup.get('task-summary')!.value,
+		}
+
+		this.tasksService.updateTask(this.editingTask?.taskId!, task).subscribe((createdTask) => {
+			let index = this.tasks.findIndex(t => t.taskId === taskId);
+			if (index < 0) {
+				console.warn("Couldn't find task with id", taskId);
+				return;
+			}
+
+			this.tasks[index] = createdTask;
+
+			this.modalService.dismissAll();
+			this.modalRef?.close();
+		});
+	}
+
+	openModal(modal: TemplateRef<any>, taskId: number) {
+		//Find the task object
+		let task = this.tasks.find(t => t.taskId === taskId);
+		this.editingTask = task;
+
+		//Update the form group
+		this.formGroup.patchValue({
+			'priority': task?.priority,
+			'task-status': task?.taskStatus,
+			'assigned-to': task?.assignedTo,
+			'task-summary': task?.taskSummary,
+		})
+
+		//Open the modal
+		this.modalRef = this.modalService.open(modal, { ariaLabelledBy: 'modal-basic-title' });
 	}
 }

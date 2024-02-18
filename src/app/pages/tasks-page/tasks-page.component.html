@@ -6,6 +6,7 @@
 			<th>Assigned To</th>
 			<th>Task Summary</th>
 			<th></th>
+			<th></th>
 		</tr>
 	</thead>
 
@@ -16,6 +17,11 @@
 			<td> {{task.assignedTo}} </td>
 			<td> {{task.taskSummary}} </td>
 			<td>
+				<button title="Edit Task" class="btn text-primary d-inline-block p-0" (click)="openModal(editTaskModal, task.taskId)">
+					<i class="bi bi-pencil-square"></i>
+				</button>
+			</td>
+			<td>
 				<button title="Delete Task" class="btn text-danger d-inline-block p-0" (click)="deleteTaskClick($event, task.taskId)">
 					<i class="bi-trash3"></i>
 				</button>
@@ -23,3 +29,60 @@
 		</tr>
 	</tbody>
 </table>
+
+<ng-template #editTaskModal let-modal>
+	<div class="modal-header">
+		<h4 class="modal-title" id="modal-basic-title">Edit task</h4>
+		<button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
+	</div>
+	<div class="modal-body">
+		<form [formGroup]="formGroup">
+			<div class="mb-3">
+				<label for="priority">Priority</label>
+				<select
+					formControlName="priority"
+					id="priority"
+					class="form-control dropdown"
+					name="priority"
+				>
+					<option value="UNASSIGNED">Unassigned</option>
+					<option value="LOW">Low</option>
+					<option value="MEDIUM">Medium</option>
+					<option value="HIGH">High</option>
+				</select>
+
+				<label for="priority">Status</label>
+				<input
+					formControlName="task-status"
+					type="text"
+					id="task-status"
+					class="form-control"
+					placeholder="In Progress"
+					name="task-status"
+				/>
+
+				<label for="assigned-to">Assigned To</label>
+				<input
+					formControlName="assigned-to"
+					type="text"
+					id="assigned-to"
+					class="form-control"
+					placeholder="My User"
+					name="assigned-to"
+				/>
+
+				<label for="task-summary">Task Summary</label>
+				<textarea
+					formControlName="task-summary"
+					id="task-summary"
+					class="form-control"
+					placeholder="Lorem ipsum dolor sit amet."
+					name="task-summary"
+				></textarea>
+			</div>
+		</form>
+	</div>
+	<div class="modal-footer">
+		<button type="button" class="btn btn-outline-dark" (click)="saveTaskClick($event, editTaskModal)">Save</button>
+	</div>
+</ng-template>
