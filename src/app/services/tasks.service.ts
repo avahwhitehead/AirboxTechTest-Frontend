@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { DestroyRef, Injectable } from '@angular/core';
 import { HttpClient } from "@angular/common/http";
 import { map, Observable } from "rxjs";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
@@ -9,6 +9,7 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 export class TasksService {
 	constructor(
 		private httpClient: HttpClient,
+		private destroyRef: DestroyRef,
 	) {}
 
 	/**
@@ -19,7 +20,7 @@ export class TasksService {
 		return this.httpClient.get<TaskResponse[]>("/api/tasks")
 			.pipe(
 				//Automatically clean up any listeners
-				takeUntilDestroyed(),
+				takeUntilDestroyed(this.destroyRef),
 				//Convert the tasks from the api response format to a cleaner format
 				map(this.arrayMap(this.TaskResponseToTask)),
 			);
@@ -34,7 +35,7 @@ export class TasksService {
 		return this.httpClient.get<TaskResponse>("/api/tasks")
 			.pipe(
 				//Automatically clean up any listeners
-				takeUntilDestroyed(),
+				takeUntilDestroyed(this.destroyRef),
 				//Convert the task from the api response format to a cleaner format
 				map(this.TaskResponseToTask),
 			);
@@ -51,7 +52,7 @@ export class TasksService {
 		return this.httpClient.post<TaskResponse[]>("/api/tasks", taskResponses)
 			.pipe(
 				//Automatically clean up any listeners
-				takeUntilDestroyed(),
+				takeUntilDestroyed(this.destroyRef),
 				//Convert the tasks from the api response format to a cleaner format
 				map(this.arrayMap(this.TaskResponseToTask)),
 			);
@@ -66,7 +67,7 @@ export class TasksService {
 		return this.httpClient.put<TaskResponse>(`/api/tasks/${id}`, taskResponse)
 			.pipe(
 				//Automatically clean up any listeners
-				takeUntilDestroyed(),
+				takeUntilDestroyed(this.destroyRef),
 				//Convert the task from the api response format to a cleaner format
 				map(this.TaskResponseToTask),
 			);
@@ -80,7 +81,7 @@ export class TasksService {
 		return this.httpClient.delete<void>(`/api/tasks/${id}`)
 			.pipe(
 				//Automatically clean up any listeners
-				takeUntilDestroyed(),
+				takeUntilDestroyed(this.destroyRef),
 			);
 	}
 
