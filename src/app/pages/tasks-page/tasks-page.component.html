@@ -1,1 +1,21 @@
-<p>tasks-page works!</p>
+<table class="table table-striped">
+	<thead class="table-header">
+		<tr>
+			<th>Task Id</th>
+			<th>Priority</th>
+			<th>Task Status</th>
+			<th>Assigned To</th>
+			<th>Task Summary</th>
+		</tr>
+	</thead>
+
+	<tbody>
+		<tr *ngFor="let task of tasks">
+			<td> {{task.taskId}} </td>
+			<td> {{task.priority | titlecase}} </td>
+			<td> {{task.taskStatus}} </td>
+			<td> {{task.assignedTo}} </td>
+			<td> {{task.taskSummary}} </td>
+		</tr>
+	</tbody>
+</table>
