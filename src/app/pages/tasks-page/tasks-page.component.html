@@ -1,21 +1,25 @@
 <table class="table table-striped">
 	<thead class="table-header">
 		<tr>
-			<th>Task Id</th>
 			<th>Priority</th>
 			<th>Task Status</th>
 			<th>Assigned To</th>
 			<th>Task Summary</th>
+			<th></th>
 		</tr>
 	</thead>
 
 	<tbody>
 		<tr *ngFor="let task of tasks">
-			<td> {{task.taskId}} </td>
 			<td> {{task.priority | titlecase}} </td>
 			<td> {{task.taskStatus}} </td>
 			<td> {{task.assignedTo}} </td>
 			<td> {{task.taskSummary}} </td>
+			<td>
+				<button title="Delete Task" class="btn text-danger d-inline-block p-0" (click)="deleteTaskClick($event, task.taskId)">
+					<i class="bi-trash3"></i>
+				</button>
+			</td>
 		</tr>
 	</tbody>
 </table>
