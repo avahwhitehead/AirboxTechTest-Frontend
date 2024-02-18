@@ -1,12 +1,12 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { TasksPageComponent } from "./pages/tasks-page/tasks-page.component";
-import { AppComponent } from "./app.component";
+import { HomePageComponent } from "./pages/home-page/home-page.component";
 
 const routes: Routes = [
 	{
 		path: '',
-		component: AppComponent,
+		component: HomePageComponent,
 	},
 	{
 		path: 'tasks',

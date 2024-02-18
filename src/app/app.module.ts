@@ -7,6 +7,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { HeaderModule } from "./components/header/header.module";
 import { TasksPageModule } from "./pages/tasks-page/tasks-page.module";
 import { HttpClientModule } from "@angular/common/http";
+import { HomePageModule } from "./pages/home-page/home-page.module";
 
 @NgModule({
 	declarations: [
@@ -18,6 +19,7 @@ import { HttpClientModule } from "@angular/common/http";
 		NgbModule,
 		HeaderModule,
 		TasksPageModule,
+		HomePageModule,
 	],
 	providers: [
 		importProvidersFrom(HttpClientModule)
