@@ -20,10 +20,9 @@ import { HomePageModule } from "./pages/home-page/home-page.module";
 		HeaderModule,
 		TasksPageModule,
 		HomePageModule,
+		HttpClientModule,
 	],
-	providers: [
-		importProvidersFrom(HttpClientModule)
-	],
+	providers: [],
 	bootstrap: [AppComponent]
 })
 export class AppModule {
